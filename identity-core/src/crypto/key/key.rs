@@ -5,13 +5,11 @@ use core::fmt::Debug;
 use core::fmt::Display;
 use core::fmt::Formatter;
 use core::fmt::Result;
-use serde::Deserialize;
-use serde::Serialize;
 use zeroize::Zeroize;
-// TODO: Don't impl Serialize/Deserialize for SecretKey
+
 macro_rules! impl_key {
   ($ident:ident, $doc:expr) => {
-    #[derive(Clone, Serialize, Deserialize)]
+    #[derive(Clone)]
     #[doc = $doc]
     pub struct $ident(Box<[u8]>);
 
