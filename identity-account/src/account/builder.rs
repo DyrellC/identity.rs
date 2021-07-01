@@ -16,6 +16,7 @@ use crate::storage::Stronghold;
 #[derive(Debug)]
 pub enum AccountStorage {
   Memory,
+  #[cfg(feature = "stronghold")]
   Stronghold(PathBuf, Option<String>),
   Custom(Box<dyn Storage>),
 }
@@ -64,6 +65,7 @@ impl AccountBuilder {
   pub async fn build(self) -> Result<Account> {
     match self.storage {
       AccountStorage::Memory => Account::with_config(MemStore::new(), self.config).await,
+      #[cfg(feature = "stronghold")]
       AccountStorage::Stronghold(snapshot, password) => {
         let passref: Option<&str> = password.as_deref();
         let adapter: Stronghold = Stronghold::new(&snapshot, passref).await?;

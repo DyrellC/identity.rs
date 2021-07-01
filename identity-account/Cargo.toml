@@ -17,12 +17,12 @@ hashbrown = { version = "0.9", features = ["serde"] }
 identity-core = { version = "=0.3.0", path = "../identity-core" }
 identity-credential = { version = "=0.3.0", path = "../identity-credential" }
 identity-did = { version = "=0.3.0", path = "../identity-did" }
-identity-iota = { version = "=0.3.0", path = "../identity-iota" }
+identity-iota = { version = "=0.3.0", path = "../identity-iota", default-features = false }
 itoa = { version = "0.4" }
 log = { version = "0.4", default-features = false }
 once_cell = { version = "1.7", default-features = false, features = ["std"] }
 paste = { version = "1.0" }
-riker = { version = "0.4" }
+riker = { version = "0.4", optional = true }
 serde = { version = "1.0", default-features = false, features = ["alloc", "derive"] }
 slog = { version = "2.7" }
 thiserror = { version = "1.0" }
@@ -36,10 +36,12 @@ features = ["blake2b", "ed25519", "hmac", "pbkdf", "sha", "slip10", "std"]
 [dependencies.iota_stronghold]
 git = "https://github.com/iotaledger/stronghold.rs"
 rev = "6dd92dc9743eba2f3b4126425e7572470d92c80b"
+optional = true
 
 [dependencies.stronghold_engine]
 git = "https://github.com/iotaledger/stronghold.rs"
 rev = "6dd92dc9743eba2f3b4126425e7572470d92c80b"
+optional = true
 
 [dev-dependencies]
 rand = { version = "0.8" }
@@ -48,3 +50,6 @@ tokio = { version = "1.5", features = ["macros", "rt", "rt-multi-thread", "sync"
 
 [features]
 mem-client = []
+stronghold = ["iota_stronghold", "stronghold_engine", "riker"]
+wasm = ["identity-iota/wasm"]
+default = ["stronghold", "identity-iota/async"]
