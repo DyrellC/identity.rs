@@ -12,6 +12,7 @@ use wasm_bindgen::prelude::*;
 mod macros;
 mod utils;
 
+pub mod actor;
 pub mod credential;
 pub mod crypto;
 pub mod message;
