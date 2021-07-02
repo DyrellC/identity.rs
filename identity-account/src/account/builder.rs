@@ -1,7 +1,9 @@
 // Copyright 2020-2021 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+#[cfg(feature = "stronghold")]
 use std::path::PathBuf;
+#[cfg(feature = "stronghold")]
 use zeroize::Zeroize;
 
 use crate::account::Account;
@@ -10,6 +12,7 @@ use crate::account::Config;
 use crate::error::Result;
 use crate::storage::MemStore;
 use crate::storage::Storage;
+#[cfg(feature = "stronghold")]
 use crate::storage::Stronghold;
 
 /// The storage adapter used by an [Account].

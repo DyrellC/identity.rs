@@ -32,6 +32,7 @@ pub enum Error {
   #[error(transparent)]
   ActorSystemError(#[from] riker::system::SystemError),
   /// Caused by errors from the [iota_stronghold] crate.
+  #[cfg(feature = "stronghold")]
   #[error(transparent)]
   StrongholdError(#[from] iota_stronghold::Error),
   /// Caused by errors from an invalid Stronghold procedure.
