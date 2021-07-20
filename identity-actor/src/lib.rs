@@ -9,7 +9,6 @@ pub mod actor_builder;
 pub mod asyncfn;
 pub mod errors;
 pub mod storage;
-pub mod comm;
 pub mod traits;
 pub mod types;
 
