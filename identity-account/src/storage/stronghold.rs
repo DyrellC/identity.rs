@@ -11,7 +11,7 @@ use futures::TryStreamExt;
 use hashbrown::HashSet;
 use identity_core::convert::FromJson;
 use identity_core::convert::ToJson;
-use identity_core::crypto::PublicKey;
+use identity_core::crypto::{PublicKey, KeyPair};
 use identity_did::verification::MethodType;
 use iota_stronghold::Location;
 use iota_stronghold::SLIP10DeriveInput;
@@ -88,6 +88,17 @@ impl Storage for Stronghold {
   }
 
   async fn key_new(&self, id: IdentityId, location: &KeyLocation) -> Result<PublicKey> {
+    let vault: Vault<'_> = self.vault(id);
+
+    let public: PublicKey = match location.method() {
+      MethodType::Ed25519VerificationKey2018 => generate_ed25519(&vault, location).await?,
+      MethodType::MerkleKeyCollection2021 => todo!("[Stronghold::key_new] Handle MerkleKeyCollection2021"),
+    };
+
+    Ok(public)
+  }
+
+  async fn key_insert(&self, id: IdentityId, location: &KeyLocation, _keypair: KeyPair) -> Result<PublicKey> {
     let vault: Vault<'_> = self.vault(id);
 
     let public: PublicKey = match location.method() {

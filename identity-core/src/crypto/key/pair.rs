@@ -11,7 +11,7 @@ use crate::error::Result;
 use crate::utils::generate_ed25519_keypair;
 
 /// A convenient type for representing a pair of cryptographic keys.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct KeyPair {
   type_: KeyType,
   public: PublicKey,

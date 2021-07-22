@@ -4,7 +4,7 @@
 use core::fmt::Debug;
 use futures::stream::BoxStream;
 use futures::TryStreamExt;
-use identity_core::crypto::PublicKey;
+use identity_core::crypto::{PublicKey, KeyPair};
 
 use crate::error::Result;
 use crate::events::Commit;
@@ -29,6 +29,9 @@ pub trait Storage: Debug + Send + Sync + 'static {
 
   /// Creates a new keypair at the specified `location`
   async fn key_new(&self, id: IdentityId, location: &KeyLocation) -> Result<PublicKey>;
+
+  /// Inserts a given keypair at the specified `location`
+  async fn key_insert(&self, id: IdentityId, location: &KeyLocation, keys: KeyPair) -> Result<PublicKey>;
 
   /// Retrieves the public key at the specified `location`.
   async fn key_get(&self, id: IdentityId, location: &KeyLocation) -> Result<PublicKey>;
@@ -85,6 +88,10 @@ impl Storage for Box<dyn Storage> {
 
   async fn key_new(&self, id: IdentityId, location: &KeyLocation) -> Result<PublicKey> {
     (**self).key_new(id, location).await
+  }
+
+  async fn key_insert(&self, id: IdentityId, location: &KeyLocation, keys: KeyPair) -> Result<PublicKey> {
+    (**self).key_insert(id, location, keys).await
   }
 
   async fn key_get(&self, id: IdentityId, location: &KeyLocation) -> Result<PublicKey> {

@@ -109,6 +109,23 @@ impl Storage for MemStore {
     }
   }
 
+  async fn key_insert(&self, id: IdentityId, location: &KeyLocation, keypair: KeyPair) -> Result<PublicKey> {
+    let mut vaults: RwLockWriteGuard<'_, _> = self.vaults.write()?;
+    let vault: &mut MemVault = vaults.entry(id).or_default();
+
+    match location.method() {
+      MethodType::Ed25519VerificationKey2018 => {
+        let public: PublicKey = keypair.public().clone();
+        vault.insert(location.clone(), keypair);
+
+        Ok(public)
+      }
+      MethodType::MerkleKeyCollection2021 => {
+        todo!("[MemStore::key_new] Handle MerkleKeyCollection2021")
+      }
+    }
+  }
+
   async fn key_exists(&self, id: IdentityId, location: &KeyLocation) -> Result<bool> {
     let vaults: RwLockReadGuard<'_, _> = self.vaults.read()?;
 

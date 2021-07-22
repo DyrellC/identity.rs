@@ -4,7 +4,7 @@
 use identity_core::common::Fragment;
 use identity_core::common::Object;
 use identity_core::common::Url;
-use identity_core::crypto::PublicKey;
+use identity_core::crypto::{PublicKey, KeyPair};
 use identity_did::verification::MethodData;
 use identity_did::verification::MethodScope;
 use identity_did::verification::MethodType;
@@ -35,6 +35,7 @@ pub enum Command {
     scope: MethodScope,
     type_: MethodType,
     fragment: String,
+    keypair: Option<KeyPair>,
   },
   DeleteMethod {
     fragment: String,
@@ -106,7 +107,7 @@ impl Command {
           Event::new(EventData::MethodCreated(MethodScope::Authentication, method)),
         ]))
       }
-      Self::CreateMethod { type_, scope, fragment } => {
+      Self::CreateMethod { type_, scope, fragment, keypair } => {
         // The state must be initialized
         ensure!(state.did().is_some(), CommandError::DocumentNotFound);
 
@@ -131,7 +132,10 @@ impl Command {
           CommandError::DuplicateKeyFragment(location.fragment.clone()),
         );
 
-        let public: PublicKey = store.key_new(state.id(), &location).await?;
+        let public: PublicKey = match keypair {
+          Some(kp) => store.key_insert(state.id(), &location, kp).await?,
+          None => store.key_new(state.id(), &location).await?
+        };
         let data: MethodData = MethodData::new_b58(public.as_ref());
         let method: TinyMethod = TinyMethod::new(location, data, None);
 
@@ -238,6 +242,7 @@ impl_command_builder!(CreateMethod {
   @defaulte type_ MethodType = Ed25519VerificationKey2018,
   @default scope MethodScope,
   @required fragment String,
+  @optional keypair KeyPair,
 });
 
 impl_command_builder!(DeleteMethod {
