@@ -7,7 +7,7 @@
 pub type Result<T, E = Error> = ::core::result::Result<T, E>;
 
 /// This type represents all possible errors that can occur in the library.
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, thiserror::Error, strum::IntoStaticStr)]
 pub enum Error {
   /// Caused by errors from the [crypto] crate.
   #[error(transparent)]
@@ -28,9 +28,11 @@ pub enum Error {
   #[error(transparent)]
   IoError(#[from] std::io::Error),
   /// Caused by an internal failure of the riker actor system.
+  #[cfg(feature = "stronghold")]
   #[error(transparent)]
   ActorSystemError(#[from] riker::system::SystemError),
   /// Caused by errors from the [iota_stronghold] crate.
+  #[cfg(feature = "stronghold")]
   #[error(transparent)]
   StrongholdError(#[from] iota_stronghold::Error),
   /// Caused by errors from an invalid Stronghold procedure.
